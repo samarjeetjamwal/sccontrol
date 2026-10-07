@@ -14,7 +14,7 @@ header{background:var(--ac);color:#fff;padding:18px 16px;position:sticky;top:env
 header h1{font-size:18px;margin:0;flex:1;line-height:1.25}
 header small{display:block;font-weight:400;opacity:.85;font-size:12px}
 #back{display:none;background:rgba(255,255,255,.2);border:0;color:#fff;font-size:15px;padding:8px 14px;border-radius:20px;cursor:pointer}
-main{max-width:760px;margin:0 auto;padding:14px}
+main{max-width:760px;margin:0 auto;padding:14px 14px 140px}
 .grid{display:grid;gap:12px;grid-template-columns:1fr}
 @media(min-width:600px){.grid{grid-template-columns:1fr 1fr}}
 .tile{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:16px;display:flex;gap:14px;align-items:center;cursor:pointer;text-align:left;color:inherit;font:inherit;width:100%}
@@ -35,10 +35,17 @@ ol,ul{padding-left:20px;margin:6px 0}li{margin:5px 0}
 .nav{display:flex;gap:10px;margin:22px 0 10px}
 .nav button{flex:1;padding:12px;border-radius:10px;border:1px solid var(--bd);background:var(--card);color:var(--tx);font:inherit;cursor:pointer}
 .nav .p{background:var(--ac);color:#fff;border:0}
+#bar{display:none;position:fixed;left:0;right:0;bottom:0;z-index:9;background:var(--card);border-top:1px solid var(--bd);padding:12px 12px calc(10px + env(safe-area-inset-bottom,0px));gap:8px;flex-wrap:wrap;align-items:center;font-size:14px;justify-content:center}
+#bar button,#bar select{padding:9px 12px;border-radius:10px;border:1px solid var(--bd);background:var(--card);color:var(--tx);font:inherit}
+#bar select{max-width:130px}
+#pp{background:var(--ac)!important;color:#fff!important;border:0!important;font-weight:600}
+#pg{position:absolute;top:0;left:0;height:3px;background:var(--ac);width:0;transition:width .3s}
+.spk{background:var(--wn);outline:2px solid var(--ac);border-radius:8px}
 </style></head>
 <body>
 <header><button id="back" onclick="history.back()">← Back</button><h1 id="ttl">Cost Control SOP<small>Supply Chain • Warehousing • Procurement • Import</small></h1></header>
 <main id="app"></main>
+<div id="bar"><div id="pg"></div><button id="pp" onclick="toggle()">🔊 Listen</button><button onclick="stopAudio()">⏹ Stop</button><select id="rate" onchange="setRate()"><option value="0.85">Slow</option><option value="1" selected>Normal</option><option value="1.15">Fast</option><option value="1.3">Faster</option></select><select id="vc" onchange="setRate()"></select><label><input type="checkbox" id="auto" checked> Auto-play</label></div>
 <script>
 const T=[
 {i:"📊",t:"Demand Planning (S&OP)",s:"Buy only what you will really use",
@@ -100,20 +107,21 @@ c:[["Maverick buying","30% purchases happened without PO at higher prices.","No-
 ];
 const app=document.getElementById('app'),back=document.getElementById('back'),ttl=document.getElementById('ttl');
 function home(){
- back.style.display='none';ttl.innerHTML='Cost Control SOP<small>Supply Chain • Warehousing • Procurement • Import</small>';
+ stopAudio();bar.style.display='none';back.style.display='none';ttl.innerHTML='Cost Control SOP<small>Supply Chain • Warehousing • Procurement • Import</small>';
  app.innerHTML='<div class="intro"><b>Tap any topic</b> for the SOP steps, a simple example and 3 case studies with solutions. Golden rule: <b>No PO, no payment. Compare landed cost, not price. Negotiate the whole deal.</b></div><div class="grid">'+
  T.map((x,n)=>`<button class="tile" onclick="go(${n})"><span class="ic">${x.i}</span><div><b>${x.t}</b><span>${x.s}</span></div></button>`).join('')+'</div>';
  scrollTo(0,0);
 }
 function show(n){
- const x=T[n];back.style.display='block';ttl.innerHTML=x.i+' '+x.t;
- app.innerHTML=`<h2>${x.t}</h2><p>${x.p}</p>
- <h3>📋 SOP Steps</h3><div class="box"><ol>${x.st.map(s=>'<li>'+s+'</li>').join('')}</ol></div>
- <h3>💡 Simple Example</h3><div class="ex">${x.ex}</div>
+ const x=T[n];cur=n;stopAudio();bar.style.display='flex';back.style.display='block';ttl.innerHTML=x.i+' '+x.t;
+ app.innerHTML=`<h2 id="a-t">${x.t}</h2><p id="a-intro">${x.p}</p>
+ <h3>📋 SOP Steps</h3><div class="box"><ol>${x.st.map((s,k)=>'<li id="a-s'+k+'">'+s+'</li>').join('')}</ol></div>
+ <h3>💡 Simple Example</h3><div class="ex" id="a-ex">${x.ex}</div>
  <h3>📚 3 Case Studies</h3>`+
- x.c.map((c,k)=>`<div class="box case"><div class="tag">Case ${k+1}</div><h4>${c[0]}</h4><p><b>Problem:</b> ${c[1]}</p><p><b>Solution:</b> ${c[2]}</p><div class="res"><b>Result:</b> ${c[3]}</div></div>`).join('')+
+ x.c.map((c,k)=>`<div class="box case" id="a-c${k}"><div class="tag">Case ${k+1}</div><h4>${c[0]}</h4><p><b>Problem:</b> ${c[1]}</p><p><b>Solution:</b> ${c[2]}</p><div class="res"><b>Result:</b> ${c[3]}</div></div>`).join('')+
  `<div class="nav">${n>0?`<button onclick="go(${n-1})">← Prev</button>`:''}<button class="p" onclick="history.back()">All Topics</button>${n<T.length-1?`<button onclick="go(${n+1})">Next →</button>`:''}</div>`;
  scrollTo(0,0);
+ if(auto.checked)setTimeout(play,400);
 }
 function go(n){
  if(location.hash==='#t'+n)return;
@@ -121,6 +129,46 @@ function go(n){
  route();
 }
 function route(){const m=location.hash.match(/^#t(\d+)$/);m&&T[+m[1]]?show(+m[1]):home();}
+/* ===== AUDIO LECTURE ===== */
+const bar=document.getElementById('bar'),pp=document.getElementById('pp'),rate=document.getElementById('rate'),vc=document.getElementById('vc'),auto=document.getElementById('auto'),pg=document.getElementById('pg');
+let cur=0,q=[],qi=0,tk=0,st='idle',voices=[],vset=false;
+const SS=('speechSynthesis' in window)?window.speechSynthesis:null;
+try{auto.checked=localStorage.getItem('auto')!=='0'}catch(e){}
+auto.onchange=()=>{try{localStorage.setItem('auto',auto.checked?'1':'0')}catch(e){}};
+function say(t){return t
+ .replace(/₹(\d[\d,]*(?:\.\d+)?)L\b/g,'$1 lakh rupees').replace(/₹(\d[\d,]*(?:\.\d+)?) lakh/g,'$1 lakh rupees').replace(/₹(\d[\d,]*(?:\.\d+)?)/g,'$1 rupees')
+ .replace(/(\d)-(\d)/g,'$1 to $2').replace(/%/g,' percent').replace(/(\d)\+/g,'$1 plus')
+ .replace(/→/g,', gives,').replace(/×/g,' times ').replace(/÷/g,' divided by ').replace(/=/g,' equals ').replace(/\+/g,' plus ').replace(/≈/g,' approximately ')
+ .replace(/(\d)\/(\d)/g,'$1 divided by $2').replace(/\//g,' per ').replace(/S&OP/g,'S and O P').replace(/&/g,' and ')
+ .replace(/(\d)\.(\d)/g,'$1 point $2');}
+function build(x){const a=[];
+ const add=(id,t)=>(say(t).match(/[^.!?;]+[.!?;]*/g)||[]).forEach(z=>{z=z.trim();if(z)a.push({id,t:z})});
+ add('a-intro','Welcome to this professional briefing on '+x.t+'. '+x.p);
+ add('a-s0','Let us begin with the standard operating procedure. Please follow these steps in sequence.');
+ x.st.forEach((s,k)=>add('a-s'+k,'Step '+(k+1)+': '+s));
+ add('a-ex','Now, a simple practical example. '+x.ex);
+ x.c.forEach((c,k)=>add('a-c'+k,'Case study '+(k+1)+': '+c[0]+'. The problem: '+c[1]+' The solution: '+c[2]+' The result: '+c[3]));
+ add('a-c2','In conclusion, apply these steps consistently, measure the results every month, and keep improving. Thank you for listening.');
+ return a;}
+function loadVoices(){if(!SS)return;voices=SS.getVoices().filter(v=>/^en/i.test(v.lang));if(!voices.length)return;
+ const old=vc.value;vc.innerHTML=voices.map((v,i)=>'<option value="'+i+'">'+v.name.slice(0,22)+'</option>').join('');
+ if(!vset){let i=voices.findIndex(v=>/en[-_]IN/i.test(v.lang));if(i<0)i=voices.findIndex(v=>/en[-_]GB/i.test(v.lang));vc.value=i>=0?i:0;vset=true}else vc.value=old;}
+if(SS){loadVoices();SS.onvoiceschanged=loadVoices}else{pp.textContent='Audio not supported';pp.disabled=true}
+function ui(){pp.textContent=st==='play'?'⏸ Pause':st==='pause'?'▶ Resume':'🔊 Listen'}
+function hl(id){document.querySelectorAll('.spk').forEach(e=>e.classList.remove('spk'));const e=document.getElementById(id);
+ if(e){e.classList.add('spk');e.scrollIntoView({behavior:'smooth',block:'center'})}pg.style.width=(qi/Math.max(q.length,1)*100)+'%'}
+function halt(){tk++;if(SS)SS.cancel()}
+function next(){const m=++tk;if(qi>=q.length){stopAudio();return}
+ const c=q[qi],u=new SpeechSynthesisUtterance(c.t),v=voices[vc.value];
+ if(v){u.voice=v;u.lang=v.lang}else u.lang='en-IN';
+ u.rate=+rate.value;u.onstart=()=>hl(c.id);
+ u.onend=u.onerror=()=>{if(m===tk&&st==='play'){qi++;next()}};
+ SS.speak(u)}
+function play(){if(!SS)return;halt();q=build(T[cur]);qi=0;st='play';ui();setTimeout(next,80)}
+function toggle(){if(st==='play'){halt();st='pause';ui()}else if(st==='pause'){st='play';ui();setTimeout(next,80)}else play()}
+function setRate(){if(st==='play'){halt();setTimeout(next,80)}}
+function stopAudio(){halt();st='idle';q=[];qi=0;pg.style.width='0';document.querySelectorAll('.spk').forEach(e=>e.classList.remove('spk'));ui()}
+addEventListener('beforeunload',()=>SS&&SS.cancel());
 addEventListener('hashchange',route);addEventListener('popstate',route);
 route();
 </script>
