@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Manufacturing Cost Control SOP</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--bg:#f5f7fa;--card:#fff;--tx:#1b2430;--mu:#5d6b7c;--ac:#0b5fff;--bd:#e1e6ed;--ok:#e8f6ee;--okb:#1d8a4e;--wn:#fff4e5;--wnb:#c76a00}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f141b;--card:#18202a;--tx:#e8edf3;--mu:#9aa8b8;--ac:#6ea2ff;--bd:#2a3542;--ok:#12301f;--okb:#4cc283;--wn:#33240f;--wnb:#ffa94d}}
+:root[data-theme="dark"]{--bg:#0f141b;--card:#18202a;--tx:#e8edf3;--mu:#9aa8b8;--ac:#6ea2ff;--bd:#2a3542;--ok:#12301f;--okb:#4cc283;--wn:#33240f;--wnb:#ffa94d}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+header{background:var(--ac);color:#fff;padding:18px 16px;position:sticky;top:env(safe-area-inset-top,0px);z-index:5;display:flex;align-items:center;gap:10px}
+header h1{font-size:18px;margin:0;flex:1;line-height:1.25}
+header small{display:block;font-weight:400;opacity:.85;font-size:12px}
+#back{display:none;background:rgba(255,255,255,.2);border:0;color:#fff;font-size:15px;padding:8px 14px;border-radius:20px;cursor:pointer}
+main{max-width:760px;margin:0 auto;padding:14px}
+.grid{display:grid;gap:12px;grid-template-columns:1fr}
+@media(min-width:600px){.grid{grid-template-columns:1fr 1fr}}
+.tile{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:16px;display:flex;gap:14px;align-items:center;cursor:pointer;text-align:left;color:inherit;font:inherit;width:100%}
+.tile:active{transform:scale(.98)}
+.tile .ic{font-size:30px}
+.tile b{display:block;font-size:16px}
+.tile span{color:var(--mu);font-size:13px}
+.intro{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:14px;margin-bottom:14px;font-size:14px;color:var(--mu)}
+h2{font-size:22px;margin:4px 0 6px}
+h3{font-size:16px;margin:22px 0 8px;color:var(--ac)}
+.box{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:14px;margin:8px 0}
+ol,ul{padding-left:20px;margin:6px 0}li{margin:5px 0}
+.ex{background:var(--wn);border-left:4px solid var(--wnb);border-radius:8px;padding:12px 14px;margin:8px 0}
+.res{background:var(--ok);border-left:4px solid var(--okb);border-radius:8px;padding:10px 12px;margin-top:8px;font-size:15px}
+.case h4{margin:0 0 6px;font-size:15px}
+.case p{margin:6px 0}
+.tag{font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--mu)}
+.nav{display:flex;gap:10px;margin:22px 0 10px}
+.nav button{flex:1;padding:12px;border-radius:10px;border:1px solid var(--bd);background:var(--card);color:var(--tx);font:inherit;cursor:pointer}
+.nav .p{background:var(--ac);color:#fff;border:0}
+</style></head>
+<body>
+<header><button id="back" onclick="history.back()">← Back</button><h1 id="ttl">Cost Control SOP<small>Supply Chain • Warehousing • Procurement • Import</small></h1></header>
+<main id="app"></main>
+<script>
+const T=[
+{i:"📊",t:"Demand Planning (S&OP)",s:"Buy only what you will really use",
+p:"Stop over-buying and stock-outs by agreeing one monthly number between Sales, Production and Purchase.",
+st:["Sales gives 3-month forecast by product by 25th of each month.","Production converts it to material needs using the Bill of Materials (BOM).","Purchase checks current stock + open orders = net requirement.","Finance approves budget; management signs the one 'frozen' plan.","Review forecast accuracy monthly; target 85%+."],
+ex:"Each bike needs 2 tyres. Forecast = 1,000 bikes → need 2,000 tyres. Stock 500 + on order 300 → buy only 1,200.",
+c:[["Over-ordering steel","Plant bought 6 months of steel on a sales 'hope' number; ₹40 lakh stuck in stock.","Introduced monthly S&OP with a frozen 3-month window; purchase only against approved plan.","Stock fell 35%; ₹14 lakh cash released."],
+["Stock-outs stopping line","Motors ran out twice, line stopped 5 days, penalty paid to customer.","Added forecast-accuracy tracking and safety stock for the 5 critical items.","Zero line stops in next 12 months."],
+["Sales and Production fighting","Sales promised dates Production could not meet.","One shared sheet; Sales can only commit within capacity shown.","On-time delivery rose from 72% to 94%."]]},
+{i:"🛒",t:"Procurement & Vendor Selection",s:"Right supplier, right quality, right price",
+p:"Buy through a controlled process so price, quality and delivery are compared fairly and no one buys on favouritism.",
+st:["Raise Purchase Requisition (PR) with spec, qty, date, budget code.","Get minimum 3 quotes (RFQ) for spend above ₹50,000.","Compare on Total Cost: price + freight + quality rejection + payment terms.","Score vendors: Price 40, Quality 30, Delivery 20, Service 10.","Approve via limit matrix (e.g. up to ₹1L manager, above director).","Issue PO; no PO = no payment."],
+ex:"Vendor A: ₹100/pc, 5% rejects. Vendor B: ₹104/pc, 0.5% rejects. A real cost = 100/0.95 = ₹105.3. B = 104/0.995 = ₹104.5. B is cheaper!",
+c:[["Cheapest quote trap","Bearings bought at lowest price failed early; rework cost more than saving.","Switched to total-cost comparison with rejection and warranty costs.","Annual loss from rejects down ₹6 lakh."],
+["Single vendor risk","Only one supplier for castings; his fire stopped production 3 weeks.","Dual sourcing: 70% main vendor, 30% second approved vendor.","Supply risk removed; price pressure improved 4%."],
+["Rate Contract savings","200 small orders a year for fasteners, each priced differently.","Annual rate contract with monthly call-offs.","Price down 9%; 150 fewer POs to process."]]},
+{i:"🤝",t:"Negotiation Strategy",s:"Win savings without breaking relationships",
+p:"Negotiate with facts and preparation, not pressure. Aim for a win-win deal that lowers cost every year.",
+st:["Prepare: know your volume, alternatives (BATNA) and target price.","Do should-cost: break supplier price into material, labour, overhead, margin.","Open with a target 10-15% below your goal; never reveal your budget.","Trade, don't just ask: volume, longer contract, faster payment for lower price.","Negotiate total deal: price, payment terms, lead time, warranty, freight.","Document the deal in writing and review after 6 months."],
+ex:"Supplier quotes ₹120. Raw material is ₹70, labour ₹15, overhead ₹10, margin 10% ≈ ₹10. Fair price ≈ ₹105. Counter at ₹100, settle near ₹106.",
+c:[["Volume bundling","Three plants bought packaging separately at different prices.","Combined volume of all plants into one negotiation.","Saved 11% (₹18 lakh/yr)."],
+["Payment-term trade","Supplier refused price cut.","Offered payment in 15 days instead of 60 for 3% discount.","3% saved, better than bank interest cost of 1%."],
+["Index-linked pricing","Steel vendor kept price high even when market fell.","Agreed price formula linked to published steel index plus fixed conversion fee.","Price auto-reduced 8% when market fell; trust rose."]]},
+{i:"🚢",t:"Import Management",s:"Control landed cost and customs risk",
+p:"Importing looks cheap until freight, duty, delay and currency are added. Always compare on landed cost.",
+st:["Compute Landed Cost = FOB price + freight + insurance + customs duty + clearing + inland transport + financing.","Choose Incoterms wisely (FOB = you control freight; CIF = supplier does).","Confirm HS code and duty rate before ordering; check FTA benefits.","Use LC or advance as per vendor risk; hedge large foreign-currency orders.","Pre-inspect goods; track shipment; file Bill of Entry early.","Reconcile final landed cost vs. quote; keep for next negotiation."],
+ex:"Import part ₹80 FOB. Freight+insurance ₹6, duty 10% on ₹86 = ₹8.6, clearing+transport ₹3. Landed = ₹97.6. Local vendor at ₹95 is cheaper.",
+c:[["Wrong HS code","Company paid 15% duty; correct code attracted 7.5%.","Hired customs expert, reclassified, applied for refund and fixed master data.","₹9 lakh refunded; saves ₹5 lakh yearly."],
+["Demurrage losses","Containers sat at port 12 days; heavy storage charges.","Pre-filed documents, appointed one fast clearing agent with KPI.","Port dwell 2 days; charges nearly nil."],
+["Currency swing","Dollar rose 6% after PO, wiping out margin.","Forward contract booked on PO date for 70% of exposure.","Price fixed; margin protected."]]},
+{i:"🏭",t:"Warehousing & Layout",s:"Faster picking, less damage, less space",
+p:"A good warehouse is organised so any item is found in under 2 minutes and nothing is lost, damaged or expired.",
+st:["Receive: check against PO, count, inspect, GRN same day.","Label every bin with location code; one item, one location.","Place fast-moving items near dispatch door (slotting).","Use FIFO (first in first out) or FEFO for expiry goods.","Cycle count: A items monthly, B quarterly, C yearly.","Daily 5S housekeeping and weekly safety check."],
+ex:"If a worker walks 80 m per pick and 200 picks a day, that is 16 km. Moving top 20 items near the door halves it.",
+c:[["Lost items","Workers spent 1 hr/day searching parts.","Bin locations, barcodes and a simple location register.","Search time down 80%; ₹3 lakh/yr labour saved."],
+["Expired chemicals","₹2 lakh of adhesive expired unused.","Switched to FEFO with colour-coded expiry labels and monthly alert.","Expiry losses zero for a year."],
+["Congested store","Warehouse 'full', company planned to rent more space.","Disposed dead stock, vertical racking and slotting.","Gained 30% space; rent avoided ₹8 lakh/yr."]]},
+{i:"📦",t:"Inventory Control",s:"ABC analysis, safety stock, reorder point",
+p:"Inventory is cash sitting on shelves. Keep just enough to never stop production.",
+st:["ABC classify: A = top 70% value (tight control), B = next 20%, C = last 10% (simple control).","Set Reorder Point = daily usage × lead time + safety stock.","Set order quantity with EOQ or practical MOQ/rate contracts.","Review dead and slow stock monthly; sell, return or reuse.","Reconcile physical vs. system stock; accuracy target 98%."],
+ex:"Usage 50/day, lead time 10 days, safety stock 100. Reorder point = 50×10+100 = 600. When stock hits 600, place the order.",
+c:[["ABC saves cash","All 3,000 items controlled equally; staff overloaded.","Focused on 300 A items with weekly review; C items on two-bin system.","Stock down 22% with fewer shortages."],
+["Dead stock","₹25 lakh obsolete parts after design change.","Monthly obsolescence review; sold scrap, returned to vendors, reused in spares.","₹11 lakh recovered."],
+["Wrong system count","System showed stock that did not exist, causing delays.","Cycle counting and issue-against-BOM discipline.","Accuracy went from 82% to 98%."]]},
+{i:"🚚",t:"Logistics & Freight",s:"Cut transport cost per kg and per trip",
+p:"Move more with fewer trips, choose the right mode, and verify every freight bill.",
+st:["Plan loads: full truck load beats part loads.","Compare modes: road, rail, sea, air by cost and urgency.","Use milk-run pickups from nearby suppliers.","Fix transporter rates by lane annually; tender every year.","Verify freight bill vs. weight, distance and agreed rate before payment.","Track on-time and damage rate per transporter."],
+ex:"2 trucks at 50% load cost ₹20,000 each = ₹40,000. One full truck = ₹22,000. Saving ₹18,000 per trip.",
+c:[["Milk-run","10 suppliers each sent small trucks daily.","One truck collected from all on a fixed route.","Inbound freight down 28%."],
+["Air freight habit","Frequent air shipments due to poor planning.","Better planning; sea for planned, air only with approval.","₹12 lakh/yr saved."],
+["Freight bill errors","Bills had wrong weights and duplicate charges.","Three-way match: bill vs. LR vs. gate entry.","Overbilling of 4% caught."]]},
+{i:"✅",t:"Cost KPIs, Audit & Control",s:"What gets measured gets reduced",
+p:"Track a few simple numbers monthly, audit for leakage, and review results with management.",
+st:["Track KPIs: Purchase Price Variance, Inventory Days, Fill Rate, OTIF, Rejection %, Freight % of sales.","Set targets and a 'traffic-light' dashboard (green/amber/red).","Monthly cost review meeting with action owners.","Quarterly internal audit: PO compliance, GRN vs. invoice, vendor changes.","Run savings tracker: only cash-verified savings count.","Reward cost-saving ideas; share results with team."],
+ex:"Inventory Days = Stock value ÷ daily cost of sales. ₹90 lakh ÷ ₹3 lakh = 30 days. Cut to 25 days = ₹15 lakh cash freed.",
+c:[["Maverick buying","30% purchases happened without PO at higher prices.","No-PO-No-Pay rule and audit.","Purchases under control; 6% price saving."],
+["Hidden leakage","Duplicate invoices paid twice.","Three-way match (PO, GRN, invoice) and system duplicate check.","₹4 lakh recovered."],
+["Dashboard discipline","Managers argued with different numbers.","One weekly dashboard with owner for each KPI.","Decisions faster; cost down 5% in a year."]]}
+];
+const app=document.getElementById('app'),back=document.getElementById('back'),ttl=document.getElementById('ttl');
+function home(){
+ back.style.display='none';ttl.innerHTML='Cost Control SOP<small>Supply Chain • Warehousing • Procurement • Import</small>';
+ app.innerHTML='<div class="intro"><b>Tap any topic</b> for the SOP steps, a simple example and 3 case studies with solutions. Golden rule: <b>No PO, no payment. Compare landed cost, not price. Negotiate the whole deal.</b></div><div class="grid">'+
+ T.map((x,n)=>`<button class="tile" onclick="go(${n})"><span class="ic">${x.i}</span><div><b>${x.t}</b><span>${x.s}</span></div></button>`).join('')+'</div>';
+ scrollTo(0,0);
+}
+function show(n){
+ const x=T[n];back.style.display='block';ttl.innerHTML=x.i+' '+x.t;
+ app.innerHTML=`<h2>${x.t}</h2><p>${x.p}</p>
+ <h3>📋 SOP Steps</h3><div class="box"><ol>${x.st.map(s=>'<li>'+s+'</li>').join('')}</ol></div>
+ <h3>💡 Simple Example</h3><div class="ex">${x.ex}</div>
+ <h3>📚 3 Case Studies</h3>`+
+ x.c.map((c,k)=>`<div class="box case"><div class="tag">Case ${k+1}</div><h4>${c[0]}</h4><p><b>Problem:</b> ${c[1]}</p><p><b>Solution:</b> ${c[2]}</p><div class="res"><b>Result:</b> ${c[3]}</div></div>`).join('')+
+ `<div class="nav">${n>0?`<button onclick="go(${n-1})">← Prev</button>`:''}<button class="p" onclick="history.back()">All Topics</button>${n<T.length-1?`<button onclick="go(${n+1})">Next →</button>`:''}</div>`;
+ scrollTo(0,0);
+}
+function go(n){
+ if(location.hash==='#t'+n)return;
+ if(location.hash.startsWith('#t'))history.replaceState(null,'','#t'+n);else history.pushState(null,'','#t'+n);
+ route();
+}
+function route(){const m=location.hash.match(/^#t(\d+)$/);m&&T[+m[1]]?show(+m[1]):home();}
+addEventListener('hashchange',route);addEventListener('popstate',route);
+route();
+</script>
+</body></html>
